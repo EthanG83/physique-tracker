@@ -1,4 +1,4 @@
-const CACHE_NAME = 'form-physique-v6';
+const CACHE_NAME = 'form-physique-v9';
 const ASSETS = [
   './',
   './index.html',

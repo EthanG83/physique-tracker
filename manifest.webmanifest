@@ -1,7 +1,7 @@
 {
-  "name": "FORM — Training & Nutrition",
+  "name": "FORM",
   "short_name": "FORM",
-  "description": "A focused daily log for calories, macros, workouts and bodyweight.",
+  "description": "Nutrition and training tracking",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#0b1220",
