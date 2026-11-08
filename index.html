@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>FORM · Physique Tracker</title>
+  <title>FORM v11 · Physique Tracker</title>
   <meta name="theme-color" content="#0b1220" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -303,41 +303,51 @@
       .navItem{font-size:10px}
     }
     @media(max-width:390px){.macroGrid{grid-template-columns:1fr}.heroQuote{font-size:8px}}
+
+    /* V11: Physique first, compact end-of-page overview, no mobile 2x2 layout */
+    #view-physique.active{display:flex;flex-direction:column;align-items:stretch;gap:12px}
+    #view-physique>.leftCard{order:0;margin:0;flex:none}
+    #view-physique>.changeStatus{order:1;margin:0}
+    #view-physique>.overview{order:99;flex:none;margin-top:6px;padding:11px 13px;border-radius:15px}
+    #view-physique>.overview .overviewHeading{margin:0 0 9px;font-size:9px;letter-spacing:.1em}
+    #view-physique>.overview .overviewGrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;row-gap:0}
+    #view-physique>.overview .overviewStat,
+    #view-physique>.overview .overviewStat:nth-child(2),
+    #view-physique>.overview .overviewStat:nth-child(3),
+    #view-physique>.overview .overviewStat:nth-child(4){
+      margin:0;padding:2px 7px 1px;border-top:0;border-right:1px solid #e5eaf0;min-width:0;overflow:hidden;text-align:center;
+    }
+    #view-physique>.overview .overviewStat:last-child{border-right:0}
+    #view-physique>.overview .overviewStat small{font-size:9px;letter-spacing:0;white-space:nowrap;font-weight:800}
+    #view-physique>.overview .overviewStat strong{font-size:19px;margin:4px 0 0;line-height:1.15;white-space:nowrap;letter-spacing:-.055em}
+    #view-physique>.overview .overviewStat .overviewSecondary{display:none}
+    @media(max-width:440px){
+      #view-physique>.overview{padding:10px 6px}
+      #view-physique>.overview .overviewStat{padding:2px 3px 1px}
+      #view-physique>.overview .overviewStat small{font-size:8px}
+      #view-physique>.overview .overviewStat strong{font-size:16px}
+      #view-physique .artWrap{margin-top:9px}
+    }
+
 </style>
 </head>
 <body>
   <main class="page">
-    <section class="hero">
-      <div class="topbar">
-        <div>
-          <div class="brand">FORM <small>DISCIPLINE · HOPE · DEDICATION</small></div>
-          <div class="heroMessage">Build momentum one decision at a time. Track nutrition, training, and your physique with purpose.</div>
-          <div class="heroQuote">Show up. Stay patient. Trust your process.</div>
-          
-        </div>
-        <div>
-          <div class="dateRow">
-            <button id="prevDay" aria-label="Previous day">‹</button>
-            <input id="activeDate" type="date" aria-label="Selected date" />
-            <button id="nextDay" aria-label="Next day">›</button>
-          </div>
-          
+    <section class="hero compactHero" aria-label="FORM header">
+      <div class="topbar compactBar">
+        <div class="brand">FORM</div>
+        <div class="dateRow">
+          <button id="prevDay" type="button" aria-label="Previous day">‹</button>
+          <input id="activeDate" type="date" aria-label="Selected date" />
+          <button id="nextDay" type="button" aria-label="Next day">›</button>
         </div>
       </div>
     </section>
 
     <div class="view active" id="view-physique" data-view="physique">
-    <section class="overview" aria-label="Daily overview">
-      <div class="overviewHeading"><span>OVERVIEW</span><span id="overviewDate">TODAY</span></div>
-      <div class="overviewGrid">
-        <div class="overviewStat"><small>CALORIES LOGGED</small><strong id="overviewCalories">0</strong><span id="overviewCaloriesSub">of 2,900 kcal</span></div>
-        <div class="overviewStat"><small>PROTEIN</small><strong id="overviewProtein">0 g</strong><span id="overviewProteinSub">of 180 g</span></div>
-        <div class="overviewStat"><small>EXERCISES</small><strong id="overviewExercises">0 / 5</strong><span>completed today</span></div>
-        <div class="overviewStat"><small>CONSISTENCY</small><strong id="overviewStreak">0 days</strong><span>current streak</span></div>
-      </div>
-    </section>
+
       <section class="card leftCard">
-        <div class="eyebrow">Visual progress</div>
+        <div class="eyebrow">VISUAL CHANGES</div>
         <h1 id="figureTitle">Build your physique.</h1>
         <p class="muted" id="figureDescription">Nutrition fills the silhouette upward. Completed exercises make the figure more muscular.</p>
 
@@ -351,10 +361,12 @@
                 <stop offset="100%" stop-color="#22c55e"></stop>
               </linearGradient>
             </defs>
+            <path id="femaleHair" d="M 160 15 C 139 13 128 29 128 53 C 125 77 124 99 111 127 C 125 134 140 130 144 112 C 148 103 148 93 148 87 C 137 78 137 61 138 48 C 138 32 146 23 160 23 C 174 23 182 32 182 48 C 183 61 183 78 172 87 C 172 93 172 103 176 112 C 180 130 195 134 209 127 C 196 99 195 77 192 53 C 192 29 181 13 160 15 Z" fill="#ffffff" stroke="#111111" stroke-width="2.7" stroke-linejoin="round" style="display:none" />
             <path id="figureGlowPath" d="" fill="url(#figureGlow)" opacity="0.10"></path>
             <path id="bodyFillPath" d="" fill="#ffffff"></path>
             <rect id="nutritionFill" x="0" y="476" width="320" height="0" fill="#111111" clip-path="url(#bodyClipPath)"></rect>
             <path id="bodyOutline" d="" fill="none" stroke="#111111" stroke-width="3" stroke-linejoin="round"></path>
+            <g id="outerDefinition" fill="none" stroke="#111111" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"></g>
             <g id="detailLines" fill="none" stroke="#111111" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></g>
             <g id="detailLinesOnFill" clip-path="url(#filledAreaClip)" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></g>
           </svg>
@@ -375,6 +387,17 @@
 
 
       <div class="changeStatus" id="changeStatus" role="status" aria-live="polite">Your progress is ready. Log a meal or exercise to see your silhouette evolve.</div>
+
+
+      <section class="overview" aria-label="Daily overview">
+      <div class="overviewHeading"><span>DAILY OVERVIEW</span><span id="overviewDate">TODAY</span></div>
+      <div class="overviewGrid">
+        <div class="overviewStat"><small>CALORIES</small><strong id="overviewCalories">0</strong><span class="overviewSecondary" id="overviewCaloriesSub">of 2,900 kcal</span></div>
+        <div class="overviewStat"><small>PROTEIN</small><strong id="overviewProtein">0 g</strong><span class="overviewSecondary" id="overviewProteinSub">of 180 g</span></div>
+        <div class="overviewStat"><small>EXERCISES</small><strong id="overviewExercises">0 / 5</strong><span class="overviewSecondary">completed today</span></div>
+        <div class="overviewStat"><small>STREAK</small><strong id="overviewStreak">0 days</strong><span class="overviewSecondary">current streak</span></div>
+      </div>
+    </section>
     </div>
     <div class="view" id="view-nutrition" data-view="nutrition">
         <section class="card section">
@@ -569,7 +592,11 @@
       var hips=female?(gain?49+7*muscle:66-13*lean):(gain?43+6*muscle:59-11*lean);
       var thigh=female?(gain?34+8*muscle:44-8*lean):(gain?33+12*muscle:45-9*lean);
       var calf=female?(gain?18+4*muscle:23-5*lean):(gain?19+6*muscle:25-5*lean);
-      var arm=female?(gain?11+4*muscle:17-3*lean+2*muscle):(gain?13+8*muscle:20-4*lean+4*muscle);
+      var arm=female?(gain?11+6*muscle:17-3*lean+3*muscle):(gain?13+12*muscle:20-4*lean+6*muscle);
+      var shoulderCap=muscle*(female?5:9);
+      var tricep=muscle*(female?3:7);
+      var quadSweep=muscle*(female?5:9);
+      var calfSweep=muscle*(female?3:6);
       var neck=female?12:15;
       var center=160;
       function l(n){return +(center-n).toFixed(1)}
@@ -584,16 +611,16 @@
         C(174,83,183,69,183,49), C(184,34,178,18,160,18), 'Z',
         'M '+l(neck)+' 93',
         C(l(neck+10),99,l(shoulder-17),96,l(shoulder),112),
-        C(l(shoulder+8),125,l(shoulder+arm+3),155,l(shoulder+arm+7),188),
-        C(l(shoulder+arm+10),210,l(shoulder+arm+16),233,l(shoulder+arm+17),246),
+        C(l(shoulder+8+shoulderCap),125,l(shoulder+arm+3+shoulderCap),155,l(shoulder+arm+7),188),
+        C(l(shoulder+arm+10+tricep),210,l(shoulder+arm+16+tricep),233,l(shoulder+arm+17),246),
         C(l(shoulder+arm+18),254,l(shoulder+arm+16),265,l(shoulder+arm+8),268),
         C(l(shoulder+arm+1),270,l(shoulder+arm-5),263,l(shoulder+arm-7),254),
         C(l(shoulder+arm-10),234,l(shoulder+arm-7),215,l(shoulder+arm-8),199),
         C(l(chest+9),179,l(chest+5),161,l(chest),148),
         C(l(chest-3),169,l(waist+8),210,l(waist),236),
         C(l(waist-1),257,l(hips),278,l(hips),302),
-        C(l(thigh+3),330,l(thigh+4),351,l(thigh-3),375),
-        C(l(thigh-10),398,l(calf+2),416,l(calf),440),
+        C(l(thigh+3+quadSweep),330,l(thigh+4+quadSweep),351,l(thigh-3),375),
+        C(l(thigh-10),398,l(calf+2+calfSweep),416,l(calf),440),
         C(l(calf-1),455,l(14),468,l(15),479),
         C(l(16),485,l(28),484,l(30),489),
         C(l(33),496,l(27),496,l(15),496),
@@ -610,20 +637,37 @@
         C(r(27),496,r(33),496,r(30),489),
         C(r(28),484,r(16),485,r(15),479),
         C(r(14),468,r(calf-1),455,r(calf),440),
-        C(r(calf+2),416,r(thigh-10),398,r(thigh-3),375),
-        C(r(thigh+4),351,r(thigh+3),330,r(hips),302),
+        C(r(calf+2+calfSweep),416,r(thigh-10),398,r(thigh-3),375),
+        C(r(thigh+4+quadSweep),351,r(thigh+3+quadSweep),330,r(hips),302),
         C(r(hips),278,r(waist-1),257,r(waist),236),
         C(r(waist+8),210,r(chest-3),169,r(chest),148),
         C(r(chest+5),161,r(chest+9),179,r(shoulder+arm-8),199),
         C(r(shoulder+arm-7),215,r(shoulder+arm-10),234,r(shoulder+arm-7),254),
         C(r(shoulder+arm-5),263,r(shoulder+arm+1),270,r(shoulder+arm+8),268),
         C(r(shoulder+arm+16),265,r(shoulder+arm+18),254,r(shoulder+arm+17),246),
-        C(r(shoulder+arm+16),233,r(shoulder+arm+10),210,r(shoulder+arm+7),188),
-        C(r(shoulder+arm+3),155,r(shoulder+8),125,r(shoulder),112),
+        C(r(shoulder+arm+16+tricep),233,r(shoulder+arm+10+tricep),210,r(shoulder+arm+7),188),
+        C(r(shoulder+arm+3+shoulderCap),155,r(shoulder+8+shoulderCap),125,r(shoulder),112),
         C(r(shoulder-17),96,r(neck+10),99,r(neck),93),
         'Z'
       ];
       return d.join(' ');
+    }
+    // Short secondary ridges trace anatomical landmarks along the outside of
+    // the arms and thighs. Their opacity increases with training progress.
+    function outlineDefinition(gender,mode,muscle,lean){
+      var female=gender==='female', m=clamp(muscle,0,1);
+      var shoulder=female?(mode==='gain'?52+7*m:63-12*lean+3*m):(mode==='gain'?57+16*m:73-15*lean+5*m);
+      var thigh=female?(mode==='gain'?34+8*m:44-8*lean):(mode==='gain'?33+12*m:45-9*lean);
+      var sx=160-shoulder, tx=160-thigh;
+      var xml=[
+        '<path d="M '+(sx+7).toFixed(1)+' 118 Q '+(sx-9).toFixed(1)+' 131 '+(sx-13).toFixed(1)+' 154"/>',
+        '<path d="M '+(320-sx-7).toFixed(1)+' 118 Q '+(320-sx+9).toFixed(1)+' 131 '+(320-sx+13).toFixed(1)+' 154"/>',
+        '<path d="M '+(sx-18).toFixed(1)+' 160 Q '+(sx-27).toFixed(1)+' 182 '+(sx-24).toFixed(1)+' 194"/>',
+        '<path d="M '+(320-sx+18).toFixed(1)+' 160 Q '+(320-sx+27).toFixed(1)+' 182 '+(320-sx+24).toFixed(1)+' 194"/>',
+        '<path d="M '+(tx-4).toFixed(1)+' 325 Q '+(tx-11).toFixed(1)+' 344 '+(tx-4).toFixed(1)+' 360"/>',
+        '<path d="M '+(320-tx+4).toFixed(1)+' 325 Q '+(320-tx+11).toFixed(1)+' 344 '+(320-tx+4).toFixed(1)+' 360"/>'
+      ].join('');
+      return {html:xml, opacity:(0.07+0.75*m).toFixed(3)};
     }
     function maleLines(mode,muscle,lean){
       var op=clamp((mode==='gain'?0.09+0.70*muscle:0.10+0.45*muscle+0.24*lean),0,.85);
@@ -664,6 +708,10 @@
       $('nutritionFill').setAttribute('height', String(498-y));
       $('filledAreaRect').setAttribute('y',String(y));
       $('filledAreaRect').setAttribute('height',String(498-y));
+      $('femaleHair').style.display=settings.gender==='female'?'block':'none';
+      var ridges=outlineDefinition(settings.gender,settings.goalType,model.exercisePct,settings.goalType==='lose'?ratio(total.calories,settings.calories):0);
+      $('outerDefinition').innerHTML=ridges.html;
+      $('outerDefinition').setAttribute('opacity',ridges.opacity);
       $('detailLines').innerHTML=model.detail.html;
       $('detailLines').setAttribute('opacity', String(model.detail.opacity));
       $('detailLinesOnFill').innerHTML=model.detail.html;
@@ -872,9 +920,20 @@
       var prefersReduced=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       var status=$('changeStatus');
       status.innerHTML='<span class="animationMessage">'+label+'</span> · Watch your daily progress take shape.';
-      selectTab('physique');
-      if(prefersReduced){animationFrame=null;return;}
-      var duration=2100,start=null,paths=['bodyOutline','bodyFillPath','bodyClip','figureGlowPath'];
+      // Animate the destination section into view rather than snapping between pages.
+      var sourcePanel=$('view-'+currentTab);
+      if(sourcePanel && !prefersReduced && currentTab!=='physique'){
+        sourcePanel.classList.add('leaving');
+      }
+      function finishTransition(){
+        if(sourcePanel) sourcePanel.classList.remove('leaving');
+        selectTab('physique');
+        if(prefersReduced){animationFrame=null;return;}
+        requestAnimationFrame(function(){requestAnimationFrame(startMorph);});
+      }
+      if(sourcePanel && !prefersReduced && currentTab!=='physique') setTimeout(finishTransition,180);
+      else finishTransition();
+      var duration=2350,start=null,paths=['bodyOutline','bodyFillPath','bodyClip','figureGlowPath'];
       var beforePath=before.path,afterPath=after.path;
       var fromY=before.y,toY=after.y,fromH=before.height,toH=after.height;
       function frame(ts){
@@ -893,7 +952,7 @@
         if(raw<1){animationFrame=requestAnimationFrame(frame);}
         else{animationFrame=null;status.textContent='Progress saved. Every consistent day counts.';}
       }
-      animationFrame=requestAnimationFrame(frame);
+      function startMorph(){ animationFrame=requestAnimationFrame(frame); }
     }
 
     document.querySelectorAll('[data-metric]').forEach(function(button){ button.addEventListener('click',function(){ chartMetric=this.getAttribute('data-metric'); renderNutritionChart(); }); });
