@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>FORM v11 · Physique Tracker</title>
+  <title>FORM v13 · Physique Tracker</title>
   <meta name="theme-color" content="#0b1220" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -329,7 +329,10 @@
       #view-physique .artWrap{margin-top:9px}
     }
 
-</style>
+
+    .bodyState{margin:4px auto 1px;text-align:center;font-size:10px;letter-spacing:.15em;font-weight:850;color:#44536b}
+    #physiqueSvg{max-width:330px}
+  </style>
 </head>
 <body>
   <main class="page">
@@ -361,15 +364,18 @@
                 <stop offset="100%" stop-color="#22c55e"></stop>
               </linearGradient>
             </defs>
-            <path id="femaleHair" d="M 160 15 C 139 13 128 29 128 53 C 125 77 124 99 111 127 C 125 134 140 130 144 112 C 148 103 148 93 148 87 C 137 78 137 61 138 48 C 138 32 146 23 160 23 C 174 23 182 32 182 48 C 183 61 183 78 172 87 C 172 93 172 103 176 112 C 180 130 195 134 209 127 C 196 99 195 77 192 53 C 192 29 181 13 160 15 Z" fill="#ffffff" stroke="#111111" stroke-width="2.7" stroke-linejoin="round" style="display:none" />
+            <path id="femaleHair" d="M 160 14 C 139 14 128 31 129 57 C 129 79 130 99 125 118 C 122 139 116 160 110 175 C 122 184 132 178 138 166 C 143 151 143 128 146 106 C 145 94 138 79 140 53 C 142 35 150 29 160 27 C 170 29 178 35 180 53 C 182 79 175 94 174 106 C 177 128 177 151 182 166 C 188 178 198 184 210 175 C 204 160 198 139 195 118 C 190 99 191 79 191 57 C 192 31 181 14 160 14 Z" fill="#ffffff" stroke="#111111" stroke-width="2.7" stroke-linejoin="round" style="display:none" />
             <path id="figureGlowPath" d="" fill="url(#figureGlow)" opacity="0.10"></path>
             <path id="bodyFillPath" d="" fill="#ffffff"></path>
             <rect id="nutritionFill" x="0" y="476" width="320" height="0" fill="#111111" clip-path="url(#bodyClipPath)"></rect>
             <path id="bodyOutline" d="" fill="none" stroke="#111111" stroke-width="3" stroke-linejoin="round"></path>
+            <g id="garmentLines" fill="none" stroke="#111111" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"></g>
+            <g id="garmentLinesOnFill" clip-path="url(#filledAreaClip)" fill="none" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"></g>
             <g id="outerDefinition" fill="none" stroke="#111111" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"></g>
             <g id="detailLines" fill="none" stroke="#111111" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></g>
             <g id="detailLinesOnFill" clip-path="url(#filledAreaClip)" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></g>
           </svg>
+          <div class="bodyState" id="bodyState">SKINNY → STRONG</div>
           <div class="legend">
             <span><i class="swatch"></i> outline</span>
             <span><i class="swatch fill"></i> nutrition fill</span>
@@ -584,109 +590,174 @@
     // Parametric front-facing adult outline: rounded shoulders, distinct arms,
     // natural waist and hips, separate thighs, calves, ankles and feet.
     // Waist, limbs, shoulders and hips respond to the original goal program.
-    function cleanBodyPath(gender,mode,muscle,lean){
-      var female=gender==='female', gain=mode==='gain';
-      var shoulder=female?(gain?52+7*muscle:63-12*lean+3*muscle):(gain?57+16*muscle:73-15*lean+5*muscle);
-      var chest=female?(gain?45+4*muscle:51-9*lean):(gain?46+14*muscle:62-12*lean);
-      var waist=female?(gain?29+2*muscle:48-12*lean):(gain?34+4*muscle:51-14*lean);
-      var hips=female?(gain?49+7*muscle:66-13*lean):(gain?43+6*muscle:59-11*lean);
-      var thigh=female?(gain?34+8*muscle:44-8*lean):(gain?33+12*muscle:45-9*lean);
-      var calf=female?(gain?18+4*muscle:23-5*lean):(gain?19+6*muscle:25-5*lean);
-      var arm=female?(gain?11+6*muscle:17-3*lean+3*muscle):(gain?13+12*muscle:20-4*lean+6*muscle);
-      var shoulderCap=muscle*(female?5:9);
-      var tricep=muscle*(female?3:7);
-      var quadSweep=muscle*(female?5:9);
-      var calfSweep=muscle*(female?3:6);
-      var neck=female?12:15;
-      var center=160;
-      function l(n){return +(center-n).toFixed(1)}
-      function r(n){return +(center+n).toFixed(1)}
-      function L(x,y){return 'L '+x+' '+y}
-      function C(a,b,c,d,e,f){return 'C '+a+' '+b+' '+c+' '+d+' '+e+' '+f}
-      // All contour points are mirrored around the vertical central axis.
-      // Separate foot shapes avoid the earlier rectangular/tapered lower legs.
-      var d=[
-        'M 160 18',
-        C(142,18,136,34,137,49), C(137,69,146,83,160,90),
-        C(174,83,183,69,183,49), C(184,34,178,18,160,18), 'Z',
-        'M '+l(neck)+' 93',
-        C(l(neck+10),99,l(shoulder-17),96,l(shoulder),112),
-        C(l(shoulder+8+shoulderCap),125,l(shoulder+arm+3+shoulderCap),155,l(shoulder+arm+7),188),
-        C(l(shoulder+arm+10+tricep),210,l(shoulder+arm+16+tricep),233,l(shoulder+arm+17),246),
-        C(l(shoulder+arm+18),254,l(shoulder+arm+16),265,l(shoulder+arm+8),268),
-        C(l(shoulder+arm+1),270,l(shoulder+arm-5),263,l(shoulder+arm-7),254),
-        C(l(shoulder+arm-10),234,l(shoulder+arm-7),215,l(shoulder+arm-8),199),
-        C(l(chest+9),179,l(chest+5),161,l(chest),148),
-        C(l(chest-3),169,l(waist+8),210,l(waist),236),
-        C(l(waist-1),257,l(hips),278,l(hips),302),
-        C(l(thigh+3+quadSweep),330,l(thigh+4+quadSweep),351,l(thigh-3),375),
-        C(l(thigh-10),398,l(calf+2+calfSweep),416,l(calf),440),
-        C(l(calf-1),455,l(14),468,l(15),479),
-        C(l(16),485,l(28),484,l(30),489),
-        C(l(33),496,l(27),496,l(15),496),
-        L(l(9),496),
-        C(l(7),483,l(9),459,l(10),442),
-        C(l(11),421,l(10),400,l(10),383),
-        C(l(10),359,l(14),333,l(14),316),
-        C(l(12),300,l(10),289,160,285),
-        C(r(10),289,r(12),300,r(14),316),
-        C(r(14),333,r(10),359,r(10),383),
-        C(r(10),400,r(11),421,r(10),442),
-        C(r(9),459,r(7),483,r(9),496),
-        L(r(15),496),
-        C(r(27),496,r(33),496,r(30),489),
-        C(r(28),484,r(16),485,r(15),479),
-        C(r(14),468,r(calf-1),455,r(calf),440),
-        C(r(calf+2+calfSweep),416,r(thigh-10),398,r(thigh-3),375),
-        C(r(thigh+4+quadSweep),351,r(thigh+3+quadSweep),330,r(hips),302),
-        C(r(hips),278,r(waist-1),257,r(waist),236),
-        C(r(waist+8),210,r(chest-3),169,r(chest),148),
-        C(r(chest+5),161,r(chest+9),179,r(shoulder+arm-8),199),
-        C(r(shoulder+arm-7),215,r(shoulder+arm-10),234,r(shoulder+arm-7),254),
-        C(r(shoulder+arm-5),263,r(shoulder+arm+1),270,r(shoulder+arm+8),268),
-        C(r(shoulder+arm+16),265,r(shoulder+arm+18),254,r(shoulder+arm+17),246),
-        C(r(shoulder+arm+16+tricep),233,r(shoulder+arm+10+tricep),210,r(shoulder+arm+7),188),
-        C(r(shoulder+arm+3+shoulderCap),155,r(shoulder+8+shoulderCap),125,r(shoulder),112),
-        C(r(shoulder-17),96,r(neck+10),99,r(neck),93),
-        'Z'
-      ];
-      return d.join(' ');
+    
+    function lerp(a,b,t){ return a + (b-a)*t; }
+    var BODY_PRESETS={
+      male:{
+        skinny:{shoulder:39,chest:30,waist:19,hips:24,thigh:18,calf:9,arm:6,forearm:7,foot:16,belly:0,neck:10,headW:22},
+        strong:{shoulder:62,chest:55,waist:27,hips:33,thigh:28,calf:15,arm:15,forearm:12,foot:18,belly:-2,neck:14,headW:24},
+        obese:{shoulder:54,chest:55,waist:50,hips:41,thigh:27,calf:15,arm:12,forearm:11,foot:18,belly:18,neck:13,headW:24}
+      },
+      female:{
+        skinny:{shoulder:30,bust:24,waist:18,hips:27,thigh:18,calf:8,arm:5,forearm:6,foot:14,belly:0,neck:9,headW:21},
+        strong:{shoulder:40,bust:27,waist:20,hips:33,thigh:27,calf:13,arm:10,forearm:8,foot:15,belly:-1,neck:10,headW:21},
+        obese:{shoulder:37,bust:40,waist:42,hips:40,thigh:27,calf:14,arm:11,forearm:9,foot:15,belly:18,neck:10,headW:22}
+      }
+    };
+    function mixedProfile(gender,mode,muscle,lean){
+      var set=BODY_PRESETS[gender], fromKey, toKey, t;
+      if(mode==='gain'){ fromKey='skinny'; toKey='strong'; t=clamp(muscle,0,1); }
+      else if(gender==='male'){ fromKey='obese'; toKey='strong'; t=clamp(0.82*lean + 0.18*muscle,0,1); }
+      else { fromKey='obese'; toKey='skinny'; t=clamp(lean,0,1); }
+      var from=set[fromKey], to=set[toKey], out={};
+      Object.keys(from).forEach(function(k){ out[k]=lerp(from[k], to[k], t); });
+      out._from=fromKey; out._to=toKey; out._t=t; return out;
     }
-    // Short secondary ridges trace anatomical landmarks along the outside of
-    // the arms and thighs. Their opacity increases with training progress.
+
+    // Silhouette system derived from the three requested states in the reference image:
+    // strong, skinny, and obese. The app morphs between those states depending on goal.
+    // Front-facing anatomy redrawn for the user's reference: natural shoulders,
+    // distinct biceps/forearms, waist, outer thigh sweeps, calves, and shoes.
+    // Identical SVG command structure allows smooth morphing across all presets.
+    function cleanBodyPath(gender,mode,muscle,lean){
+      var p=mixedProfile(gender,mode,muscle,lean), female=gender==='female';
+      function L(v){return +(160-v).toFixed(2)}
+      function R(v){return +(160+v).toFixed(2)}
+      function C(a,b,c,d,e,f){return 'C '+a+' '+b+' '+c+' '+d+' '+e+' '+f}
+      var shoulder=p.shoulder, chest=female?p.bust:p.chest, waist=p.waist, hips=p.hips, thigh=p.thigh, calf=p.calf;
+      var arm=p.arm, forearm=p.forearm, foot=p.foot, belly=p.belly, neck=p.neck, hw=p.headW;
+      var tone=p._t, shCap=(female?1.8:4.5)+(female?3.2:7.8)*tone;
+      var bicep=arm+(female?1:2)+(female?2.8:5.5)*tone;
+      var quad=(female?1.3:2.2)+(female?4.5:7.6)*tone;
+      var calfBulge=(female?1.5:2)+(female?2.4:4)*tone;
+      var bodyShoulder=shoulder+(female?0:1.4);
+      var wrist=shoulder+arm+forearm-2;
+      return [
+        'M 160 18',
+        C(L(hw-5),18,L(hw+2),27,L(hw+2),47),
+        C(L(hw+3),68,L(13),83,160,90),
+        C(R(13),83,R(hw+3),68,R(hw+2),47),
+        C(R(hw+2),27,R(hw-5),18,160,18),'Z',
+        'M '+L(neck)+' 93',
+        C(L(neck+10),100,L(bodyShoulder-16),98,L(bodyShoulder),113),
+        C(L(bodyShoulder+shCap),120,L(bodyShoulder+bicep-1),147,L(bodyShoulder+bicep+2),175),
+        C(L(bodyShoulder+bicep+5),186,L(wrist+4),209,L(wrist+6),231),
+        C(L(wrist+8),243,L(wrist+8),257,L(wrist+5),265),
+        C(L(wrist+1),274,L(wrist-4),277,L(wrist-10),272),
+        C(L(wrist-15),266,L(wrist-14),256,L(wrist-13),247),
+        C(L(wrist-11),231,L(wrist-11),210,L(wrist-10),198),
+        C(L(chest+9),184,L(chest+4),160,L(chest),147),
+        C(L(chest-3),170,L(waist+belly*0.2+4),200,L(waist+belly*0.6),231),
+        C(L(waist+belly*0.3),261,L(hips+1),286,L(hips),307),
+        C(L(thigh+quad+1),327,L(thigh+quad+2),352,L(thigh-1),375),
+        C(L(thigh-8),393,L(calf+calfBulge+1),410,L(calf),437),
+        C(L(calf-1),456,L(foot-2),469,L(foot-1),480),
+        C(L(foot+2),482,L(foot+10),483,L(foot+13),491),
+        C(L(foot+16),497,L(foot+5),498,L(foot-2),498),
+        'L '+L(6)+' 498',
+        C(L(5),479,L(7),462,L(9),440),
+        C(L(10),418,L(10),404,L(9),381),
+        C(L(8),352,L(12),326,L(12),309),
+        C(L(11),294,L(8),287,160,283),
+        C(R(8),287,R(11),294,R(12),309),
+        C(R(12),326,R(8),352,R(9),381),
+        C(R(10),404,R(10),418,R(9),440),
+        C(R(7),462,R(5),479,R(6),498),
+        'L '+R(foot-2)+' 498',
+        C(R(foot+5),498,R(foot+16),497,R(foot+13),491),
+        C(R(foot+10),483,R(foot+2),482,R(foot-1),480),
+        C(R(foot-2),469,R(calf-1),456,R(calf),437),
+        C(R(calf+calfBulge+1),410,R(thigh-8),393,R(thigh-1),375),
+        C(R(thigh+quad+2),352,R(thigh+quad+1),327,R(hips),307),
+        C(R(hips+1),286,R(waist+belly*0.3),261,R(waist+belly*0.6),231),
+        C(R(waist+belly*0.2+4),200,R(chest-3),170,R(chest),147),
+        C(R(chest+4),160,R(chest+9),184,R(wrist-10),198),
+        C(R(wrist-11),210,R(wrist-11),231,R(wrist-13),247),
+        C(R(wrist-14),256,R(wrist-15),266,R(wrist-10),272),
+        C(R(wrist-4),277,R(wrist+1),274,R(wrist+5),265),
+        C(R(wrist+8),257,R(wrist+8),243,R(wrist+6),231),
+        C(R(wrist+4),209,R(bodyShoulder+bicep+5),186,R(bodyShoulder+bicep+2),175),
+        C(R(bodyShoulder+bicep-1),147,R(bodyShoulder+shCap),120,R(bodyShoulder),113),
+        C(R(bodyShoulder-16),98,R(neck+10),100,R(neck),93),'Z'
+      ].join(' ');
+    }
+    function clothingLines(gender,mode,muscle,lean){
+      var p=mixedProfile(gender,mode,muscle,lean), female=gender==='female';
+      var hips=p.hips, waist=p.waist, thigh=p.thigh, foot=p.foot, bust=p.bust||p.chest, calf=p.calf;
+      var xL=function(n){return +(160-n).toFixed(1)}, xR=function(n){return +(160+n).toFixed(1)};
+      var lines=[
+        // Shorts waistband and two hems, aligned to each silhouette's hip/thigh size.
+        '<path d="M '+xL(waist+1)+' 277 Q 160 282 '+xR(waist+1)+' 277"/>',
+        '<path d="M '+xL(hips-1)+' 306 Q '+xL(thigh-5)+' 326 '+xL(thigh-1)+' 351"/>',
+        '<path d="M '+xR(hips-1)+' 306 Q '+xR(thigh-5)+' 326 '+xR(thigh-1)+' 351"/>',
+        '<path d="M '+xL(thigh-1)+' 351 Q '+xL(15)+' 352 '+xL(10)+' 350"/>',
+        '<path d="M '+xR(thigh-1)+' 351 Q '+xR(15)+' 352 '+xR(10)+' 350"/>',
+        '<path d="M 160 283 L 160 316"/>',
+        // Shoe collars and small toe/seam details.
+        '<path d="M '+xL(calf+2)+' 468 Q '+xL(foot)+' 472 '+xL(foot+2)+' 478"/>',
+        '<path d="M '+xR(calf+2)+' 468 Q '+xR(foot)+' 472 '+xR(foot+2)+' 478"/>',
+        '<path d="M '+xL(foot+2)+' 486 Q '+xL(foot+11)+' 490 '+xL(foot+12)+' 493"/>',
+        '<path d="M '+xR(foot+2)+' 486 Q '+xR(foot+11)+' 490 '+xR(foot+12)+' 493"/>'
+      ];
+      if(female){
+        lines.push('<path d="M 147 94 Q 144 102 141 113 M 173 94 Q 176 102 179 113"/>');
+        lines.push('<path d="M 141 113 Q 124 119 '+xL(bust)+' 148 M 179 113 Q 196 119 '+xR(bust)+' 148"/>');
+        lines.push('<path d="M '+xL(bust-4)+' 168 Q 160 176 '+xR(bust-4)+' 168"/>');
+        lines.push('<path d="M '+xL(bust-6)+' 184 Q 160 189 '+xR(bust-6)+' 184"/>');
+      }else{
+        lines.push('<path d="M '+xL(waist)+' 267 Q 160 271 '+xR(waist)+' 267"/>');
+      }
+      // Hairline. No facial features, matching the clean illustrative references.
+      if(!female) lines.push('<path d="M 139 44 Q 145 29 160 32 Q 174 31 181 44"/>');
+      return lines.join('');
+    }
     function outlineDefinition(gender,mode,muscle,lean){
-      var female=gender==='female', m=clamp(muscle,0,1);
-      var shoulder=female?(mode==='gain'?52+7*m:63-12*lean+3*m):(mode==='gain'?57+16*m:73-15*lean+5*m);
-      var thigh=female?(mode==='gain'?34+8*m:44-8*lean):(mode==='gain'?33+12*m:45-9*lean);
+      var p=mixedProfile(gender,mode,muscle,lean), female=gender==='female';
+      var tone=gender==='male'?clamp((mode==='gain'?muscle:(0.7*lean+0.3*muscle)),0,1):clamp((mode==='gain'?muscle:(0.3*lean+0.25*muscle)),0,1);
+      var shoulder=p.shoulder, thigh=p.thigh, calf=p.calf;
       var sx=160-shoulder, tx=160-thigh;
       var xml=[
-        '<path d="M '+(sx+7).toFixed(1)+' 118 Q '+(sx-9).toFixed(1)+' 131 '+(sx-13).toFixed(1)+' 154"/>',
-        '<path d="M '+(320-sx-7).toFixed(1)+' 118 Q '+(320-sx+9).toFixed(1)+' 131 '+(320-sx+13).toFixed(1)+' 154"/>',
-        '<path d="M '+(sx-18).toFixed(1)+' 160 Q '+(sx-27).toFixed(1)+' 182 '+(sx-24).toFixed(1)+' 194"/>',
-        '<path d="M '+(320-sx+18).toFixed(1)+' 160 Q '+(320-sx+27).toFixed(1)+' 182 '+(320-sx+24).toFixed(1)+' 194"/>',
-        '<path d="M '+(tx-4).toFixed(1)+' 325 Q '+(tx-11).toFixed(1)+' 344 '+(tx-4).toFixed(1)+' 360"/>',
-        '<path d="M '+(320-tx+4).toFixed(1)+' 325 Q '+(320-tx+11).toFixed(1)+' 344 '+(320-tx+4).toFixed(1)+' 360"/>'
-      ].join('');
-      return {html:xml, opacity:(0.07+0.75*m).toFixed(3)};
+        '<path d="M '+(sx+8).toFixed(1)+' 120 Q '+(sx-8).toFixed(1)+' 136 '+(sx-10).toFixed(1)+' 157"/>',
+        '<path d="M '+(320-sx-8).toFixed(1)+' 120 Q '+(320-sx+8).toFixed(1)+' 136 '+(320-sx+10).toFixed(1)+' 157"/>',
+        '<path d="M '+(tx+4).toFixed(1)+' 328 Q '+(tx-8).toFixed(1)+' 346 '+(tx+1).toFixed(1)+' 363"/>',
+        '<path d="M '+(320-tx-4).toFixed(1)+' 328 Q '+(320-tx+8).toFixed(1)+' 346 '+(320-tx-1).toFixed(1)+' 363"/>'
+      ];
+      if(!female && tone>0.35){
+        xml.push('<path d="M '+(160-calf-6).toFixed(1)+' 416 Q '+(160-calf-13).toFixed(1)+' 430 '+(160-calf-5).toFixed(1)+' 445"/>');
+        xml.push('<path d="M '+(160+calf+6).toFixed(1)+' 416 Q '+(160+calf+13).toFixed(1)+' 430 '+(160+calf+5).toFixed(1)+' 445"/>');
+      }
+      return {html:xml.join(''), opacity:(0.08+0.72*tone).toFixed(3)};
     }
     function maleLines(mode,muscle,lean){
-      var op=clamp((mode==='gain'?0.09+0.70*muscle:0.10+0.45*muscle+0.24*lean),0,.85);
-      return {opacity:op,html:[
-        '<path d="M119 147 Q140 158 156 150 M164 150 Q180 158 201 147"/>',
-        '<path d="M160 159 L160 229"/>',
-        '<path d="M138 180 Q146 184 155 181 M165 181 Q174 184 182 180"/>',
-        '<path d="M140 202 Q148 206 156 202 M164 202 Q172 206 180 202"/>',
-        '<path d="M134 322 Q139 343 140 365 M186 322 Q181 343 180 365"/>'
-      ].join('')};
+      var p=mixedProfile('male',mode,muscle,lean), tone=clamp((mode==='gain'?muscle:(0.65*lean+0.35*muscle)),0,1), low=p._t<0.45, mid=p._t>=0.45&&p._t<0.8;
+      var lines=[];
+      if(low){
+        lines.push('<path d="M132 171 Q145 176 155 173 M165 173 Q175 176 188 171"/>');
+        lines.push('<path d="M160 219 Q158 225 160 229"/>');
+      }else if(mid){
+        lines.push('<path d="M122 149 Q142 160 156 152 M164 152 Q178 160 198 149"/>');
+        lines.push('<path d="M160 160 L160 226"/>');
+        lines.push('<path d="M138 182 Q147 188 156 183 M164 183 Q173 188 182 183"/>');
+      }else{
+        lines.push('<path d="M118 147 Q140 160 156 151 M164 151 Q180 160 202 147"/>');
+        lines.push('<path d="M160 160 L160 231"/>');
+        lines.push('<path d="M138 181 Q148 186 156 182 M164 182 Q172 186 182 181"/>');
+        lines.push('<path d="M139 201 Q149 206 156 202 M164 202 Q171 206 181 201"/>');
+        lines.push('<path d="M133 322 Q139 343 140 365 M187 322 Q181 343 180 365"/>');
+      }
+      return {opacity:(0.12+0.70*tone).toFixed(3), html:lines.join('')};
     }
     function femaleLines(mode,muscle,lean){
-      // No pectoral outlines; subtle midline and leg contours only.
-      var op=clamp((mode==='gain'?0.04+0.52*muscle:0.05+0.35*muscle+0.18*lean),0,.65);
-      return {opacity:op,html:[
-        '<path d="M160 176 Q158 196 160 213"/>',
-        '<path d="M143 211 Q151 215 156 213 M164 213 Q169 215 177 211"/>',
-        '<path d="M133 328 Q140 348 141 366 M187 328 Q180 348 179 366"/>'
-      ].join('')};
+      var p=mixedProfile('female',mode,muscle,lean), tone=clamp((mode==='gain'?muscle:(0.25*muscle+0.25*lean)),0,1), lines=[];
+      // No pectoral outlines. Keep abdominal/leg definition subtle.
+      if(p._to==='skinny'){
+        lines.push('<path d="M160 212 Q159 220 160 227"/>');
+      }else{
+        lines.push('<path d="M160 177 Q158 195 160 214"/>');
+        lines.push('<path d="M143 214 Q150 217 156 214 M164 214 Q170 217 177 214"/>');
+        if(tone>0.5) lines.push('<path d="M134 330 Q141 348 142 366 M186 330 Q179 348 178 366"/>');
+      }
+      return {opacity:(0.08+0.45*tone).toFixed(3), html:lines.join('')};
     }
     function visualModel(settings, totals, exerciseCount){
       var exerciseProgress=ratio(exerciseCount, settings.exercises);
@@ -697,6 +768,7 @@
       }
       return { path: cleanBodyPath(settings.gender,'lose',exerciseProgress,calorieProgress), detail: settings.gender==='male'?maleLines('lose',exerciseProgress,calorieProgress):femaleLines('lose',exerciseProgress,calorieProgress), nutritionFill:fillProgress, headlinePct:calorieProgress, exercisePct:exerciseProgress };
     }
+
     function updateSilhouette(settings, total, exerciseCount){
       var model=visualModel(settings,total,exerciseCount);
       $('bodyClip').setAttribute('d', model.path);
@@ -710,6 +782,9 @@
       $('filledAreaRect').setAttribute('height',String(498-y));
       $('femaleHair').style.display=settings.gender==='female'?'block':'none';
       var ridges=outlineDefinition(settings.gender,settings.goalType,model.exercisePct,settings.goalType==='lose'?ratio(total.calories,settings.calories):0);
+      var clothing=clothingLines(settings.gender,settings.goalType,model.exercisePct,settings.goalType==='lose'?ratio(total.calories,settings.calories):0);
+      $('garmentLines').innerHTML=clothing;
+      $('garmentLinesOnFill').innerHTML=clothing;
       $('outerDefinition').innerHTML=ridges.html;
       $('outerDefinition').setAttribute('opacity',ridges.opacity);
       $('detailLines').innerHTML=model.detail.html;
@@ -850,6 +925,7 @@
       var model=updateSilhouette(settings,total,day.exercises.length);
       $('kpiNutrition').textContent=Math.round(model.headlinePct*100)+'%';
       $('kpiTraining').textContent=Math.round(model.exercisePct*100)+'%';
+      $('bodyState').textContent=settings.goalType==='gain'?'SKINNY → STRONG':(settings.gender==='female'?'OBESE → SKINNY':'OBESE → STRONG');
       $('calorieDisplay').textContent=fmt(total.calories)+' / '+fmt(settings.calories)+' kcal';
       $('calorieDisplayRight').textContent=Math.round(foodProgress*100)+'%';
       $('calorieBar').style.width=(foodProgress*100)+'%';
